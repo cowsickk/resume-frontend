@@ -132,7 +132,7 @@ const ResumeBuilder = () => {
     }
     try {
       setAiLoading(true);
-      const res = await fetch("https://resume-backend-production-4e7c.up.railway.app", {
+      const res = await fetch("https://resume-backend-production-4e7c.up.railway.app/generate-resume-base", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ role: formData.role, experienceLevel: formData.experienceLevel }),
