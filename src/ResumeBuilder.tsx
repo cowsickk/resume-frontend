@@ -156,7 +156,7 @@ const ResumeBuilder = () => {
     if (!formData.email.trim()) { showToast("Please enter your email.", "err"); return; }
     try {
       setLoading(true);
-      const res = await fetch("http://localhost:5000/generate-resume", {
+      const res = await fetch("https://resume-backend-production-4e7c.up.railway.app/generate-resume", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),

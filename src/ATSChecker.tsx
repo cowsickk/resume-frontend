@@ -74,7 +74,7 @@ const ATSChecker = () => {
       formData.append("role", role);
       formData.append("jobDescription", jobDescription);
       formData.append("resume", file);
-      const res = await fetch("http://localhost:5000/ats-check", {
+      const res = await fetch("https://resume-backend-production-4e7c.up.railway.app/ats-check", {
         method: "POST", body: formData,
       });
       const data = await res.json();

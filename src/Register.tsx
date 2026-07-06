@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, User, Lock, Sparkles, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 
 const Register = () => {
@@ -31,10 +31,12 @@ const Register = () => {
     if (password !== confirmPassword) { setError("Passwords do not match."); return; }
     setLoading(true);
     try {
-      const response = await fetch("http://localhost:5000/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
+      const response = await fetch("https://resume-backend-production-4e7c.up.railway.app/register", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({ username, password }),
       });
       const data = await response.json();
       if (response.ok) {
@@ -50,143 +52,186 @@ const Register = () => {
     }
   };
 
-  return (
-    <div className="min-h-screen w-full flex relative overflow-hidden bg-[hsl(0,0%,3%)]">
-      {/* Ambient glows */}
-      <div className="absolute top-[10%] left-[10%] w-[400px] h-[400px] rounded-full bg-violet-600 opacity-10 blur-[130px] pointer-events-none" />
-      <div className="absolute bottom-[10%] right-[10%] w-[350px] h-[350px] rounded-full bg-indigo-600 opacity-10 blur-[120px] pointer-events-none" />
+  // Shared styling tokens for the floating-label glass inputs
+  const inputBase =
+    "peer w-full h-14 bg-white/[0.04] border border-white/10 rounded-2xl pl-11 pr-11 pt-4 pb-1 text-[15px] text-white placeholder-transparent focus:outline-none focus:bg-white/[0.06] focus:border-violet-400/50 focus:ring-4 focus:ring-violet-500/10 transition-all duration-200";
+  const labelBase =
+    "absolute left-11 top-2 text-xs font-medium text-white/45 pointer-events-none transition-all duration-200 peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:text-[15px] peer-placeholder-shown:text-white/35 peer-focus:top-2 peer-focus:translate-y-0 peer-focus:text-xs peer-focus:text-violet-300";
+  const iconBase =
+    "absolute left-4 top-1/2 -translate-y-1/2 w-[18px] h-[18px] text-white/30 peer-focus:text-violet-300 transition-colors duration-200 pointer-events-none";
+  const eyeButton =
+    "absolute right-3.5 top-1/2 -translate-y-1/2 text-white/35 hover:text-white/70 transition-colors duration-150 rounded-lg p-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-400/50";
 
-      {/* Left branding */}
-      <div className="hidden md:flex flex-1 items-center justify-center relative z-10 px-12">
-        <div className="max-w-md">
-          <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-full px-4 py-1.5 mb-8">
-            <span className="w-2 h-2 rounded-full bg-violet-400 animate-pulse" />
-            <span className="text-white/60 text-xs font-medium tracking-widest uppercase">Create Account</span>
-          </div>
-          <h1 className="text-5xl font-extrabold text-white mb-5 tracking-tight leading-tight">
-            Start your<br />career journey.
-          </h1>
-          <p className="text-white/50 text-base leading-relaxed">
-            Join thousands building smarter resumes with AI tools built for the modern job market.
-          </p>
-          <div className="mt-10 flex flex-col gap-3">
-            {["Free to use — no credit card needed", "Generate resumes in under 2 minutes", "Built-in ATS optimisation tools"].map((f) => (
-              <div key={f} className="flex items-center gap-3 text-white/60 text-sm">
-                <span className="w-5 h-5 rounded-full bg-violet-500/20 border border-violet-500/30 flex items-center justify-center flex-shrink-0">
-                  <span className="text-violet-400 text-xs">✓</span>
-                </span>
-                {f}
-              </div>
-            ))}
-          </div>
-        </div>
+  return (
+    <div className="min-h-screen w-full flex items-center justify-center relative overflow-hidden bg-[#08080c] px-4 py-10 sm:py-16">
+      <style>{`
+        @keyframes rf-fade-up {
+          from { opacity: 0; transform: translateY(14px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes rf-drift {
+          0%, 100% { transform: translate(0, 0); }
+          50% { transform: translate(18px, -14px); }
+        }
+        .rf-enter { animation: rf-fade-up 0.32s cubic-bezier(0.16,1,0.3,1) both; }
+        .rf-orb-a { animation: rf-drift 11s ease-in-out infinite; }
+        .rf-orb-b { animation: rf-drift 14s ease-in-out infinite reverse; }
+        @media (prefers-reduced-motion: reduce) {
+          .rf-enter, .rf-orb-a, .rf-orb-b { animation: none; }
+        }
+      `}</style>
+
+      {/* Ambient background glows */}
+      <div aria-hidden="true" className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="rf-orb-a absolute top-[-8%] left-[-6%] w-[280px] h-[280px] sm:w-[420px] sm:h-[420px] rounded-full bg-indigo-600/20 blur-[110px]" />
+        <div className="rf-orb-b absolute bottom-[-10%] right-[-8%] w-[260px] h-[260px] sm:w-[380px] sm:h-[380px] rounded-full bg-violet-600/20 blur-[110px]" />
+        <div className="absolute top-[35%] right-[15%] w-[180px] h-[180px] rounded-full bg-fuchsia-500/10 blur-[100px]" />
       </div>
 
-      {/* Right form */}
-      <div className="w-full md:w-[500px] flex items-center justify-center p-6 md:p-12 relative z-10">
-        <div className="w-full max-w-md">
-          <div className="backdrop-blur-xl bg-white/[0.06] border border-white/10 rounded-2xl p-8 shadow-2xl">
-            <div className="md:hidden text-center mb-6">
-              <span className="text-white font-extrabold text-xl tracking-tight">AI Resume Suite</span>
-            </div>
+      <div className="rf-enter w-full max-w-[420px] relative z-10">
+        {/* Logo + heading */}
+        <div className="flex flex-col items-center text-center mb-7">
+          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-[0_6px_24px_rgba(99,102,241,0.35)] mb-5">
+            <Sparkles className="w-5 h-5 text-white" strokeWidth={2.25} />
+          </div>
+          <h1 className="text-[28px] sm:text-[32px] font-bold tracking-tight text-white leading-tight">
+            Create your account
+          </h1>
+          <p className="text-white/45 text-sm mt-2 max-w-[280px]">
+            Join AI Resume Suite and start building a resume that gets noticed.
+          </p>
+        </div>
 
-            <h2 className="text-2xl font-bold text-white mb-1 tracking-tight">Create account</h2>
-            <p className="text-white/40 text-sm mb-7">Fill in the details to get started</p>
+        {/* Glass card with gradient hairline border */}
+        <div className="rounded-[26px] p-[1px] bg-gradient-to-b from-white/15 via-white/5 to-white/[0.03] shadow-[0_20px_60px_rgba(0,0,0,0.45)]">
+          <div className="rounded-[25px] bg-white/[0.045] backdrop-blur-2xl border border-white/[0.06] px-6 py-7 sm:px-8 sm:py-8">
 
             {error && (
-              <div className="mb-5 px-4 py-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-sm flex items-center gap-2">
-                <span className="flex-shrink-0">⚠</span> {error}
+              <div role="alert" aria-live="polite" className="mb-5 flex items-start gap-2.5 px-4 py-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-300 text-sm">
+                <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                <span>{error}</span>
               </div>
             )}
             {success && (
-              <div className="mb-5 px-4 py-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm flex items-center gap-2">
-                <span className="flex-shrink-0">✓</span> Account created! Redirecting to login...
+              <div role="status" aria-live="polite" className="mb-5 flex items-start gap-2.5 px-4 py-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-sm">
+                <CheckCircle2 className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                <span>Account created. Redirecting to sign in…</span>
               </div>
             )}
 
-            <form onSubmit={handleRegister} className="space-y-4">
-              <div>
-                <label className="text-xs font-semibold text-white/50 uppercase tracking-wider mb-2 block">Username</label>
+            <form onSubmit={handleRegister} className="space-y-5" noValidate>
+              {/* Username */}
+              <div className="relative">
+                <User className={iconBase} />
                 <input
+                  id="reg-username"
                   type="text"
                   required
                   value={username}
                   onChange={(e) => { setUsername(e.target.value); setError(""); }}
-                  placeholder="Choose a username"
-                  className="w-full h-11 bg-white/5 border border-white/10 rounded-xl px-4 text-white placeholder:text-white/25 focus:outline-none focus:border-violet-500/60 focus:ring-2 focus:ring-violet-500/20 transition-all text-sm"
+                  placeholder=" "
+                  aria-label="Username"
+                  className={inputBase}
                 />
+                <label htmlFor="reg-username" className={labelBase}>Username</label>
               </div>
 
+              {/* Password */}
               <div>
-                <label className="text-xs font-semibold text-white/50 uppercase tracking-wider mb-2 block">Password</label>
                 <div className="relative">
+                  <Lock className={iconBase} />
                   <input
+                    id="reg-password"
                     type={showPassword ? "text" : "password"}
                     required
                     value={password}
                     onChange={(e) => { setPassword(e.target.value); setError(""); }}
-                    placeholder="Create a password"
-                    className="w-full h-11 bg-white/5 border border-white/10 rounded-xl px-4 pr-11 text-white placeholder:text-white/25 focus:outline-none focus:border-violet-500/60 focus:ring-2 focus:ring-violet-500/20 transition-all text-sm"
+                    placeholder=" "
+                    aria-label="Password"
+                    className={inputBase}
                   />
-                  <button type="button" onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/60 transition-colors">
+                  <label htmlFor="reg-password" className={labelBase}>Password</label>
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                    className={eyeButton}
+                  >
                     {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
                 </div>
                 {password && (
-                  <div className="mt-2 space-y-1">
+                  <div className="mt-2.5 px-1">
                     <div className="w-full h-1 bg-white/10 rounded-full overflow-hidden">
                       <div className={`h-full rounded-full transition-all duration-300 ${strength.color}`} style={{ width: strength.width }} />
                     </div>
-                    <p className="text-xs text-white/40">{strength.label}</p>
+                    <p className="text-xs text-white/40 mt-1.5">{strength.label}</p>
                   </div>
                 )}
               </div>
 
+              {/* Confirm password */}
               <div>
-                <label className="text-xs font-semibold text-white/50 uppercase tracking-wider mb-2 block">Confirm Password</label>
                 <div className="relative">
+                  <Lock className={`${iconBase} ${confirmPassword && confirmPassword !== password ? "text-rose-400/70" : ""}`} />
                   <input
+                    id="reg-confirm"
                     type={showConfirm ? "text" : "password"}
                     required
                     value={confirmPassword}
                     onChange={(e) => { setConfirmPassword(e.target.value); setError(""); }}
-                    placeholder="Re-enter your password"
-                    className={`w-full h-11 bg-white/5 border rounded-xl px-4 pr-11 text-white placeholder:text-white/25 focus:outline-none focus:ring-2 transition-all text-sm ${
+                    placeholder=" "
+                    aria-label="Confirm password"
+                    aria-invalid={!!(confirmPassword && confirmPassword !== password)}
+                    className={`${inputBase} ${
                       confirmPassword && confirmPassword !== password
-                        ? "border-rose-500/40 focus:border-rose-500/60 focus:ring-rose-500/20"
-                        : "border-white/10 focus:border-violet-500/60 focus:ring-violet-500/20"
+                        ? "border-rose-500/40 focus:border-rose-500/60 focus:ring-rose-500/10"
+                        : ""
                     }`}
                   />
-                  <button type="button" onClick={() => setShowConfirm(!showConfirm)}
-                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/60 transition-colors">
+                  <label htmlFor="reg-confirm" className={labelBase}>Confirm password</label>
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirm(!showConfirm)}
+                    aria-label={showConfirm ? "Hide password" : "Show password"}
+                    className={eyeButton}
+                  >
                     {showConfirm ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
                 </div>
                 {confirmPassword && confirmPassword !== password && (
-                  <p className="text-xs text-rose-400 mt-1.5">Passwords don't match</p>
+                  <p className="text-xs text-rose-400 mt-1.5 px-1">Passwords don't match</p>
                 )}
               </div>
 
-              <button type="submit" disabled={loading || success}
-                className="w-full h-11 mt-2 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white rounded-xl font-semibold text-sm transition-all duration-200 disabled:opacity-50 shadow-lg shadow-violet-900/30 active:scale-[0.98]">
+              {/* Submit */}
+              <button
+                type="submit"
+                disabled={loading || success}
+                className="w-full h-12 mt-1 rounded-2xl font-semibold text-sm text-white bg-gradient-to-r from-indigo-600 to-violet-600 shadow-[0_8px_24px_rgba(99,102,241,0.3)] transition-all duration-200 hover:from-indigo-500 hover:to-violet-500 hover:shadow-[0_10px_28px_rgba(139,92,246,0.4)] active:scale-[0.98] disabled:opacity-50 disabled:hover:from-indigo-600 disabled:hover:to-violet-600 disabled:active:scale-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-400/60 focus-visible:ring-offset-2 focus-visible:ring-offset-[#08080c]"
+              >
                 {loading ? (
                   <span className="flex items-center justify-center gap-2">
-                    <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                    Creating account...
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Creating account…
                   </span>
-                ) : "Create Account"}
+                ) : (
+                  "Create account"
+                )}
               </button>
             </form>
-
-            <p className="text-center text-sm text-white/35 mt-6">
-              Already have an account?{" "}
-              <Link to="/" className="text-violet-400 font-semibold hover:text-violet-300 transition-colors">
-                Sign In
-              </Link>
-            </p>
           </div>
         </div>
+
+        <p className="text-center text-sm text-white/35 mt-6">
+          Already have an account?{" "}
+          <Link
+            to="/"
+            className="text-violet-300 font-semibold hover:text-violet-200 underline decoration-violet-400/0 hover:decoration-violet-400/60 underline-offset-4 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-400/50 rounded"
+          >
+            Sign in
+          </Link>
+        </p>
       </div>
     </div>
   );

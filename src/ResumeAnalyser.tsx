@@ -27,7 +27,7 @@ const ResumeAnalyser = () => {
       const formData = new FormData();
       formData.append("role", role);
       formData.append("resume", file);
-      const res = await fetch("http://localhost:5000/analyse-resume", {
+      const res = await fetch("https://resume-backend-production-4e7c.up.railway.app/analyse-resume", {
         method: "POST", body: formData,
       });
       if (!res.ok) {
