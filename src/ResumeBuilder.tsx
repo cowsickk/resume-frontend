@@ -86,11 +86,19 @@ const LEVELS = [
   "Fresher / Entry-Level", "1â€“3 Years (Associate)",
   "3â€“5 Years (Mid-Senior)", "5+ Years (Lead / Principal)",
 ];
-const cleanResumeText = (value: string) =>
-  value
-    .replace(/(?:&bull;|&#8226;|&#x2022;|â€¢|â€˘|•|▪|●|◦|►|▸|›)\s*/g, "")
+const cleanResumeText = (value: string) => {
+  const badSymbols = [
+    "â€¢", "â€˘", "•", "&bull;", "&#8226;", "&#x2022;",
+    "▪", "●", "◦", "►", "▸", "›",
+  ];
+
+  return badSymbols
+    .reduce((text, symbol) => text.split(symbol).join(""), value || "")
     .replace(/\u00a0/g, " ")
+    .replace(/[ \t]+\n/g, "\n")
+    .replace(/\n{3,}/g, "\n\n")
     .trim();
+};
 
 const buildResumePayload = (data: ResumeData) => {
   const cleanedAdditionalInfo = cleanResumeText(data.additionalInfo);
